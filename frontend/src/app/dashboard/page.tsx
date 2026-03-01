@@ -52,7 +52,7 @@ export default function DashboardPage() {
                 href="/dashboard/users"
                 className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >
-                View Users
+                View Usuarios
               </Link>
               <Link
                 href="/dashboard/posts"
