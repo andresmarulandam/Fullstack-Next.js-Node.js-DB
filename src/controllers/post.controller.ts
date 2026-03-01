@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { postRepository } from '../repositories/post.repository';
 import { userRepository } from '../repositories/user.repository';
+import { createError } from '../middlewares/error.middleware';
 
 export const postController = {
   async create(req: Request, res: Response) {
@@ -8,28 +9,22 @@ export const postController = {
       const { title, content, author_id } = req.body;
 
       if (!title || !content || !author_id) {
-        return res.status(400).json({
-          error: 'Missing required fields: title, content, author_id',
-        });
+        throw createError('Missing required fields: title, content, author_id');
       }
 
       if (title.length < 3) {
-        return res.status(400).json({
-          error: 'The title must be at least 3 characters long',
-        });
+        throw createError('The title must be at least 3 characters long');
       }
 
       if (content.length < 10) {
-        return res.status(400).json({
-          error: 'The content must be at least 10 characters long',
-        });
+        throw createError('The content must be at least 10 characters long');
       }
 
       const author = await userRepository.findById(author_id);
       if (!author) {
-        return res.status(404).json({
-          error: 'The author does not exist. You must import the user first.',
-        });
+        throw createError(
+          'The author does not exist. You must import the user first.',
+        );
       }
 
       const post = await postRepository.create({ title, content, author_id });

@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { userController } from '../controllers/user.controller';
+import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
+//Public route
+router.post('/import/:id', authMiddleware, userController.importUser);
 
-router.post('/import/:id', userController.importUser);
-
-router.get('/saved', userController.getSavedUsers);
-
-router.get('/saved/:id', userController.getSavedUserById);
+//Protected routes
+router.get('/saved', authMiddleware, userController.getSavedUsers);
+router.get('/saved/:id', authMiddleware, userController.getSavedUserById);
 
 export default router;
