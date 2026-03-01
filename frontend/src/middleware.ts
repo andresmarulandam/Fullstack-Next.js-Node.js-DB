@@ -4,13 +4,19 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const token =
     request.cookies.get('token')?.value ||
-    request.headers.get('authorization')?.replace('Bearer ', '') ||
-    request.nextUrl.searchParams.get('token');
+    request.headers.get('authorization')?.replace('Bearer ', '');
 
   const isAuthenticated = !!token;
-  const isAuthPage = request.nextUrl.pathname.startsWith('/auth/login');
+  const path = request.nextUrl.pathname;
 
-  if (!isAuthenticated && !isAuthPage) {
+  if (path === '/') {
+    return NextResponse.next();
+  }
+
+  const isAuthPage = path.startsWith('/auth/login');
+  const isDashboard = path.startsWith('/dashboard');
+
+  if (!isAuthenticated && isDashboard) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 

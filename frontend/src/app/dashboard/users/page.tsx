@@ -72,108 +72,141 @@ export default function UsersPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Cargando usuarios...</div>
+        <div className="text-gray-500">Loading users...</div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Usuarios de ReqRes</h1>
-        <Link
-          href="/dashboard/users/saved"
-          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-        >
-          View saved ({savedUsers.size})
-        </Link>
-      </div>
+    <div className="space-y-10 px-4 sm:px-6 lg:px-8 py-8">
+      <div className="card border border-gray-100 space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-gray-900">ReqRes Users</h1>
+            <p className="text-sm text-gray-600">
+              Browse and import users from ReqRes API
+            </p>
+          </div>
 
-      <div className="max-w-md">
-        <input
-          type="text"
-          placeholder="Buscar por nombre o email..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredUsers.map((user) => (
-          <div
-            key={user.id}
-            className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+          <Link
+            href="/dashboard/users/saved"
+            className="btn-secondary btn-sm whitespace-nowrap"
           >
-            <div className="flex items-center space-x-4">
-              <Image
-                src={user.avatar}
-                alt={`${user.first_name} ${user.last_name}`}
-                width={50}
-                height={50}
-                className="rounded-full"
-              />
-              <div className="flex-1">
+            Saved ({savedUsers.size})
+          </Link>
+        </div>
+
+        <div className="pt-6  space-y-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Search Users
+          </label>
+
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="input pl-9"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-6">
+          Available Users ({filteredUsers.length})
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredUsers.map((user) => (
+            <div
+              key={user.id}
+              className="card border border-gray-100 hover:shadow-md transition duration-200"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <Image
+                  src={user.avatar}
+                  alt={`${user.first_name} ${user.last_name}`}
+                  width={50}
+                  height={50}
+                  className="rounded-full"
+                />
+
+                <div className="flex-1 space-y-1">
+                  <Link
+                    href={`/dashboard/users/${user.id}`}
+                    className="font-semibold text-gray-900"
+                  >
+                    {user.first_name} {user.last_name}
+                  </Link>
+
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 ">
                 <Link
                   href={`/dashboard/users/${user.id}`}
-                  className="font-semibold hover:text-blue-600"
+                  className="btn-outline btn-sm"
                 >
-                  {user.first_name} {user.last_name}
+                  View
                 </Link>
-                <p className="text-sm text-gray-600">{user.email}</p>
+
+                {savedUsers.has(user.id) ? (
+                  <span className="badge bg-green-100 text-green-700">
+                    ✓ Saved
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => handleImport(user.id)}
+                    className="btn-primary btn-sm"
+                  >
+                    Save
+                  </button>
+                )}
               </div>
             </div>
-
-            <div className="mt-4 flex justify-between items-center">
-              <Link
-                href={`/dashboard/users/${user.id}`}
-                className="text-blue-600 hover:text-blue-800 text-sm"
-              >
-                See more
-              </Link>
-
-              {savedUsers.has(user.id) ? (
-                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
-                  ✓ Saved
-                </span>
-              ) : (
-                <button
-                  onClick={() => handleImport(user.id)}
-                  className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
-                >
-                  Save locally
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
+      {/* Pagination */}
       {filteredUsers.length > 0 && (
-        <div className="flex justify-center space-x-2 mt-6">
+        <div className="flex justify-center items-center gap-4 mt-10 pt-8 ">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            className="pagination-btn"
           >
-            Previous
+            ← Previous
           </button>
-          <span className="px-4 py-2">
-            Page {page} of {totalPages}
-          </span>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Page</span>
+            <span className="font-semibold text-gray-900 bg-gray-100 px-4 py-1 rounded-md">
+              {page}
+            </span>
+            <span className="text-sm text-gray-600">of {totalPages}</span>
+          </div>
+
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            className="pagination-btn"
           >
-            Next
+            Next →
           </button>
         </div>
       )}
 
+      {/* Empty State */}
       {filteredUsers.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
-          No users were found
+        <div className="card text-center py-14 space-y-2">
+          <p className="font-medium text-gray-800">No users were found</p>
+          <p className="text-sm text-gray-500">
+            Try adjusting your search criteria
+          </p>
         </div>
       )}
     </div>
