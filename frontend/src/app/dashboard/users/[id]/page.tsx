@@ -40,12 +40,8 @@ export default function UserDetailPage() {
     try {
       const response = await usersService.getUsersFromReqRes(1);
       const foundUser = response.data.find((u: User) => u.id === userId);
-
-      if (foundUser) {
-        setUser(foundUser);
-      } else {
-        setTimeout(() => router.push('/dashboard/users'), 3000);
-      }
+      if (foundUser) setUser(foundUser);
+      else setTimeout(() => router.push('/dashboard/users'), 3000);
     } catch (error) {
       console.error('Error loading user:', error);
     } finally {
@@ -59,16 +55,13 @@ export default function UserDetailPage() {
       setSavedUser(saved);
     } catch (error) {
       const axiosError = error as AxiosError;
-
-      if (axiosError.response?.status !== 404) {
+      if (axiosError.response?.status !== 404)
         console.error('Error checking saved user:', error);
-      }
     }
   };
 
   const handleSaveUser = async () => {
     if (!user) return;
-
     setSaving(true);
     try {
       const result = await usersService.importUser(user.id);
@@ -84,19 +77,19 @@ export default function UserDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Loading user...</div>
+        <div className="text-gray-500 animate-pulse">Loading user...</div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-red-600 mb-4">User not found</h2>
-        <p className="text-gray-600 mb-4">Redirecting to the user list...</p>
+      <div className="text-center py-12 space-y-4">
+        <h2 className="text-2xl font-bold text-gray-900">User not found</h2>
+        <p className="text-gray-600">Redirecting to the user list...</p>
         <Link
           href="/dashboard/users"
-          className="text-blue-600 hover:text-blue-800"
+          className="btn-secondary btn-sm inline-block"
         >
           Back
         </Link>
@@ -105,89 +98,78 @@ export default function UserDetailPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-6">
-        <Link
-          href="/dashboard/users"
-          className="text-blue-600 hover:text-blue-800 flex items-center gap-2"
-        >
-          ← Back to users
-        </Link>
-      </div>
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <Link
+        href="/dashboard/users"
+        className="text-gray-700 hover:text-gray-900 flex items-center gap-2 font-medium transition-colors duration-150"
+      >
+        ← Back to Users
+      </Link>
 
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="p-8">
-          <div className="flex items-center space-x-6">
-            <Image
-              src={user.avatar}
-              alt={`${user.first_name} ${user.last_name}`}
-              width={120}
-              height={120}
-              className="rounded-full"
-            />
-            <div>
-              <h1 className="text-3xl font-bold">
-                {user.first_name} {user.last_name}
-              </h1>
-              <p className="text-xl text-gray-600 mt-2">{user.email}</p>
-              <p className="text-sm text-gray-500 mt-1">ID: {user.id}</p>
-            </div>
+      <div className="card p-8 space-y-8 shadow-lg hover:shadow-xl transition-shadow rounded-lg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6  pb-6">
+          <Image
+            src={user.avatar}
+            alt={`${user.first_name} ${user.last_name}`}
+            width={120}
+            height={120}
+            className="rounded-full ring-4 ring-gray-100 object-cover"
+          />
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
+              {user.first_name} {user.last_name}
+            </h1>
+            <p className="text-xs text-gray-500">ID: {user.id}</p>
           </div>
-
-          <div className="mt-8 border-t pt-6">
-            <h2 className="text-xl font-semibold mb-4">User information</h2>
-            <dl className="grid grid-cols-2 gap-4">
-              <div>
-                <dt className="text-sm text-gray-500">Name</dt>
-                <dd className="text-lg font-medium">{user.first_name}</dd>
-              </div>
-              <div>
-                <dt className="text-sm text-gray-500">Lastname</dt>
-                <dd className="text-lg font-medium">{user.last_name}</dd>
-              </div>
-              <div>
-                <dt className="text-sm text-gray-500">Email</dt>
-                <dd className="text-lg font-medium">{user.email}</dd>
-              </div>
-            </dl>
-          </div>
-
-          {savedUser && (
-            <div className="mt-8 border-t pt-6 bg-green-50 -mx-8 -mb-8 p-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-green-800">
-                    ✅ Locally saved user
-                  </h3>
-                  <p className="text-sm text-green-600 mt-1">
-                    Saved: {new Date(savedUser.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-                <Link
-                  href="/dashboard/users/saved"
-                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                >
-                  View saved
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {!savedUser && (
-            <div className="mt-8 border-t pt-6">
-              <button
-                onClick={handleSaveUser}
-                disabled={saving}
-                className="w-full px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saving ? 'Saving...' : 'Save user locally'}
-              </button>
-              <p className="text-sm text-gray-500 text-center mt-2">
-                This user will be saved in our local database
-              </p>
-            </div>
-          )}
         </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold text-gray-900">Details</h2>
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {['First Name', 'Last Name', 'Email'].map((label, idx) => (
+              <div className="space-y-1" key={idx}>
+                <dt className="text-xs font-semibold text-gray-500 uppercase"></dt>
+                <dd className="text-lg font-medium text-gray-900">
+                  {label === 'First Name' && user.first_name}
+                  {label === 'Last Name' && user.last_name}
+                  {label === 'Email' && user.email}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        {savedUser ? (
+          <div className="p-6 rounded-lg bg-green-50 border border-green-200 space-y-4 hover:shadow-md transition-all duration-150">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">✅</span>
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-green-900">
+                  Saved locally
+                </h3>
+                <p className="text-sm text-green-700">
+                  Saved on {new Date(savedUser.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+            <Link href="/dashboard/users/saved" className="btn-secondary ">
+              View All Saved Users
+            </Link>
+          </div>
+        ) : (
+          <div className="p-6 rounded-lg bg-blue-50 border border-blue-200 space-y-4 hover:shadow-md transition-all duration-150">
+            <p className="text-sm text-blue-900">
+              Save this user to your local database for easy access later.
+            </p>
+            <button
+              onClick={handleSaveUser}
+              disabled={saving}
+              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 focus:ring-4 focus:ring-blue-200"
+            >
+              {saving ? 'Saving...' : '+ Save User Locally'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

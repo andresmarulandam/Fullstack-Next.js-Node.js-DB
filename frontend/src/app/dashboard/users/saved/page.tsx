@@ -37,16 +37,20 @@ export default function SavedUsersPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('¿Estás seguro de eliminar este usuario de la base local?')) {
+    if (
+      !confirm(
+        "'Are you sure you want to delete this user from the local database?'",
+      )
+    ) {
       return;
     }
 
     try {
       setUsers(users.filter((u) => u.id !== id));
-      alert('Usuario eliminado (simulado)');
+      alert('User deleted (simulated)');
     } catch (error) {
       console.error('Error deleting user:', error);
-      alert('Error al eliminar usuario');
+      alert('Error deleting user');
     }
   };
 
@@ -61,87 +65,87 @@ export default function SavedUsersPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Cargando usuarios guardados...</div>
+        <div className="text-gray-500">Loading saved users...</div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Usuarios guardados localmente</h1>
-        <Link
-          href="/dashboard/users"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          ← Volver a ReqRes
+    <div className="space-y-8 px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Saved Users</h1>
+          <p className="text-gray-600 text-sm mt-1">Local database</p>
+        </div>
+        <Link href="/dashboard/users" className="btn-secondary">
+          ← Back to Users
         </Link>
       </div>
 
       <div className="max-w-md">
-        <input
-          type="text"
-          placeholder="Buscar por nombre o email..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input"
+          />
+        </div>
       </div>
 
       {users.length === 0 && (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500 mb-4">
-            No hay usuarios guardados localmente
-          </p>
+          <p className="text-gray-500 mb-4">There are no locally saved users</p>
           <Link
             href="/dashboard/users"
-            className="text-blue-600 hover:text-blue-800"
+            className="text-primary hover:text-primary-dark"
           >
-            Ir a importar usuarios
+            Go to import users
           </Link>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredUsers.map((user) => (
           <div
             key={user.id}
-            className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow bg-white"
+            className="card group hover:shadow-xl transition-all duration-200"
           >
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
               <Image
                 src={user.avatar}
                 alt={`${user.first_name} ${user.last_name}`}
                 width={50}
                 height={50}
-                className="rounded-full"
+                className="rounded-full flex-shrink-0 "
               />
-              <div className="flex-1">
+              <div className="flex-1 m-4">
                 <Link
                   href={`/dashboard/users/${user.id}`}
-                  className="font-semibold hover:text-blue-600"
+                  className="font-semibold text-gray-900 hover:text-primary transition"
                 >
                   {user.first_name} {user.last_name}
                 </Link>
-                <p className="text-sm text-gray-600">{user.email}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
                 <p className="text-xs text-gray-400 mt-1">
-                  Guardado: {new Date(user.created_at).toLocaleDateString()}
+                  Saved {new Date(user.created_at).toLocaleDateString()}
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 flex justify-end space-x-2">
+            <div className="flex items-center pt-4  gap-2">
               <Link
                 href={`/dashboard/users/${user.id}`}
-                className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm border border-blue-300 rounded-md hover:bg-blue-50"
+                className="btn-primary"
               >
-                Ver
+                View
               </Link>
               <button
                 onClick={() => handleDelete(user.id)}
-                className="px-3 py-1 text-red-600 hover:text-red-800 text-sm border border-red-300 rounded-md hover:bg-red-50"
+                className="btn-secondary"
               >
-                Eliminar
+                Delete
               </button>
             </div>
           </div>
@@ -150,7 +154,7 @@ export default function SavedUsersPage() {
 
       {filteredUsers.length === 0 && users.length > 0 && (
         <div className="text-center py-8 text-gray-500">
-          {`No hay resultados para "${searchTerm}"`}
+          {`There are no results for "${searchTerm}"`}
         </div>
       )}
     </div>
