@@ -136,7 +136,7 @@ export default function UsersPage() {
                 <div className="flex-1 space-y-1">
                   <Link
                     href={`/dashboard/users/${user.id}`}
-                    className="font-semibold text-gray-900"
+                    className="font-semibold "
                   >
                     {user.first_name} {user.last_name}
                   </Link>
