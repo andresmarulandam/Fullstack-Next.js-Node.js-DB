@@ -114,4 +114,40 @@ export const usersService = {
   },
 };
 
+export const postsService = {
+  async getAllPosts() {
+    const response = await api.get('/posts');
+    return response.data;
+  },
+
+  async getPost(id: number) {
+    const response = await api.get(`/posts/${id}`);
+    return response.data;
+  },
+
+  async createPost(data: {
+    title: string;
+    content: string;
+    author_id: number;
+  }) {
+    const response = await api.post('/posts', data);
+    return response.data;
+  },
+
+  async updatePost(id: number, data: { title?: string; content?: string }) {
+    const response = await api.put(`/posts/${id}`, data);
+    return response.data;
+  },
+
+  async deletePost(id: number) {
+    const response = await api.delete(`/posts/${id}`);
+    return response.data;
+  },
+
+  async getPostsByAuthor(authorId: number) {
+    const response = await api.get(`/posts/author/${authorId}`);
+    return response.data;
+  },
+};
+
 export default api;

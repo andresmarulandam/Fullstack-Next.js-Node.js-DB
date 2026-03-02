@@ -171,7 +171,6 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Pagination */}
       {filteredUsers.length > 0 && (
         <div className="flex justify-center items-center gap-4 mt-10 pt-8 ">
           <button
@@ -200,7 +199,6 @@ export default function UsersPage() {
         </div>
       )}
 
-      {/* Empty State */}
       {filteredUsers.length === 0 && (
         <div className="card text-center py-14 space-y-2">
           <p className="font-medium text-gray-800">No users were found</p>
