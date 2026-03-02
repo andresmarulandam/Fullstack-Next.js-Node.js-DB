@@ -37,4 +37,10 @@ export const userRepository = {
     const result = await pool.query('SELECT * FROM users ORDER BY id');
     return result.rows;
   },
+
+  async delete(id: number): Promise<boolean> {
+    const query = 'DELETE FROM users WHERE id = $1 RETURNING id';
+    const result = await pool.query(query, [id]);
+    return result.rowCount ? result.rowCount > 0 : false;
+  },
 };

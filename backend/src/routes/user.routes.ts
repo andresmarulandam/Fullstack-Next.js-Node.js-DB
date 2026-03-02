@@ -9,5 +9,6 @@ router.post('/import/:id', authMiddleware, userController.importUser);
 //Protected routes
 router.get('/saved', authMiddleware, userController.getSavedUsers);
 router.get('/saved/:id', authMiddleware, userController.getSavedUserById);
+router.delete('/saved/:id', authMiddleware, userController.deleteSavedUser);
 
 export default router;

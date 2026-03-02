@@ -66,4 +66,27 @@ export const userController = {
       res.status(500).json({ error: 'Error getting user' });
     }
   },
+
+  async deleteSavedUser(req: Request, res: Response) {
+    try {
+      const idParam = req.params.id;
+      const idString = Array.isArray(idParam) ? idParam[0] : idParam;
+      const id = parseInt(idString);
+
+      if (isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid ID' });
+      }
+
+      const deleted = await userRepository.delete(id);
+
+      if (!deleted) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ error: 'Error deleting user' });
+    }
+  },
 };
