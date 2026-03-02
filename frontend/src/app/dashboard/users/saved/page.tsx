@@ -36,24 +36,6 @@ export default function SavedUsersPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (
-      !confirm(
-        "'Are you sure you want to delete this user from the local database?'",
-      )
-    ) {
-      return;
-    }
-
-    try {
-      setUsers(users.filter((u) => u.id !== id));
-      alert('User deleted (simulated)');
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      alert('Error deleting user');
-    }
-  };
-
   const filteredUsers = users.filter(
     (user) =>
       `${user.first_name} ${user.last_name}`
@@ -61,6 +43,24 @@ export default function SavedUsersPage() {
         .includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  const handleDelete = async (id: number) => {
+    if (
+      !confirm(
+        'Are you sure you want to delete this user from the local database?',
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await usersService.deleteSavedUser(id);
+      setUsers(users.filter((u) => u.id !== id));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Error deleting user');
+    }
+  };
 
   if (loading) {
     return (

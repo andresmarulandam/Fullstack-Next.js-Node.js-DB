@@ -107,6 +107,11 @@ export const usersService = {
     const response = await api.get(`/users/saved/${id}`);
     return response.data;
   },
+
+  async deleteSavedUser(id: number) {
+    const response = await api.delete(`/users/saved/${id}`);
+    return response.data;
+  },
 };
 
 export default api;
